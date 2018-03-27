@@ -1,0 +1,56 @@
+version: '3'
+services:
+
+# Org1 #####################################
+
+  onos1:
+    image: onosproject/onos:1.11.1
+    environment:
+        - ONOS_APPS=openflow,fwd,netconf,drivers.netconf,netconfsb
+    ports:
+        -   8181:8181
+    networks:
+        red1:
+            ipv4_address: 192.168.29.2
+
+  # mininet:
+  #   build: base/mininet
+  #   container_name: mininet
+  #   privileged: true
+  #   depends_on:
+  #       - "onos1"
+  #   links:
+  #    - onos1
+  #    - netopeer
+  #   environment:
+  #    - DISPLAY
+  #   volumes:
+  #    - /tmp/.X11-unix:/tmp/.X11-unix
+  #    - /lib/modules:/lib/modules
+  #    - ./base/mininet/conf:/root/tfg
+  #   networks:
+  #     - red1
+
+  netopeer:
+    build: base/netopeer
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      - NETCONF_USER=root
+      - NETCONF_PASSWORD=root
+    env_file:
+      - "variables.env"
+    depends_on:
+      - "onos1"
+    networks:
+      - red1
+
+
+
+
+networks:
+  red1:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 192.168.29.0/24
