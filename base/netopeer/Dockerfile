@@ -102,10 +102,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 COPY conf/netconf-cfg.sh /etc/netconf-cfg.sh
-COPY conf/netopeer-server-start /usr/bin/netopeer-server-start
+COPY misc/netopeer-server-start /usr/bin/netopeer-server-start
 RUN chmod +x /etc/netconf-cfg.sh
 COPY misc/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# RUN sed -i '/mesg n/d' /root/.profile
+COPY conf/datastore-acm.xml /var/lib/libnetconf/
 
 CMD /usr/bin/supervisord
