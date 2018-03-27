@@ -1,0 +1,3 @@
+#!/bin/sh
+
+docker-compose exec onos sh -c "./apache-karaf*/bin/client"

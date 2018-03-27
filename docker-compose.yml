@@ -3,7 +3,7 @@ services:
 
 # Org1 #####################################
 
-  onos1:
+  onos:
     image: onosproject/onos:1.11.1
     environment:
         - ONOS_APPS=openflow,fwd,netconf,drivers.netconf,netconfsb
@@ -18,9 +18,9 @@ services:
   #   container_name: mininet
   #   privileged: true
   #   depends_on:
-  #       - "onos1"
+  #       - "onos"
   #   links:
-  #    - onos1
+  #    - onos
   #    - netopeer
   #   environment:
   #    - DISPLAY
@@ -41,7 +41,7 @@ services:
     env_file:
       - "variables.env"
     depends_on:
-      - "onos1"
+      - "onos"
     networks:
       - red1
 
