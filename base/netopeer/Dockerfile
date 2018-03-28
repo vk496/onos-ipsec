@@ -27,6 +27,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       python-lxml \
       ssh \
       curl \
+      iproute2 \
+      dhcpcd5 \
+      libpam0g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -79,11 +82,6 @@ RUN set -e -x; \
     rm -Rf $SRC_PATH/netopeer
 
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      iproute2 \
-      dhcpcd5 \
-    && rm -rf /var/lib/apt/lists/*
-
 # #Install netopeer server and client with cfgsystem and cfginterfaces
 # RUN git clone --depth 1 https://github.com/CESNET/netopeer netopeer
 #
@@ -100,6 +98,38 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 #           make install; \
 #     rm -Rf $SRC_PATH/netopeer
 
+#Install strongswan
+ARG STRONGSWAN_VERSION=5.5.0
+ENV STRONGSWAN_VERSION_BUILD=$STRONGSWAN_VERSION
+
+RUN set -e -x; \
+      curl -O https://download.strongswan.org/strongswan-$STRONGSWAN_VERSION_BUILD.tar.bz2; \
+      tar xvf strongswan*; \
+      cd strongswan*; \
+        ./configure \
+            --enable-eap-identity \
+            --enable-eap-md5 \
+            --enable-eap-mschapv2 \
+            --enable-eap-tls \
+            --enable-eap-ttls \
+            --enable-eap-peap \
+            --enable-eap-tnc \
+            --enable-eap-dynamic \
+            --enable-eap-radius \
+            --enable-xauth-eap \
+            --enable-xauth-pam \
+            --enable-dhcp \
+            --enable-openssl \
+            --enable-addrblock \
+            --enable-unity \
+            --enable-certexpire \
+            --enable-radattr \
+            --enable-swanctl \
+            --disable-gmp; \
+        make; \
+        make install; \
+        cp src/libcharon/plugins/vici/libvici.h /usr/local/include/; \
+      rm -Rf $SRC_PATH/strongswan*
 
 COPY conf/netconf-cfg.sh /etc/netconf-cfg.sh
 COPY misc/netopeer-server-start /usr/bin/netopeer-server-start

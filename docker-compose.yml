@@ -35,6 +35,7 @@ services:
     build: base/netopeer
     cap_add:
       - SYS_ADMIN
+      - NET_ADMIN
     environment:
       - NETCONF_USER=root
       - NETCONF_PASSWORD=root
