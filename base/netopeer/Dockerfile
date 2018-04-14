@@ -1,36 +1,66 @@
-FROM ubuntu:16.04
+FROM centos:7
 
 MAINTAINER Valiantsin Kivachuk <valiantsin.kivachuk@um.es>
 
 ENV SRC_PATH /usr/src
 WORKDIR $SRC_PATH
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN yum install -y epel-release
+
+RUN yum install -y \
+      git \
+      make \
+      libtool \
+      libxml2-devel \
+      file \
+      libxslt-devel \
+      libssh-devel \
+      libcurl-devel \
+      python-pip \
+      libxml2-python \
+      openssh-server \
+      augeas-devel \
       supervisor \
       nano \
-      libreadline-dev \
-      libxml2-dev \
-      python-libxml2 \
-      dh-autoreconf \
-      libtool-bin \
-      libxslt1-dev \
-      libcurl4-openssl-dev \
-      xsltproc \
-      python-setuptools \
-      cmake \
-      zlib1g-dev \
-      libssl-dev \
-      git \
-      pkg-config \
-      ca-certificates \
-      build-essential \
-      python-lxml \
-      ssh \
-      curl \
       iproute2 \
-      dhcpcd5 \
-      libpam0g-dev \
-    && rm -rf /var/lib/apt/lists/*
+      curl \
+      git \
+      readline-devel \
+      bzip2 \
+      openssl-devel \
+      pam-devel \
+      net-tools \
+      nc \
+      iproute
+
+RUN pip install lxml
+RUN ["ssh-keygen", "-A"]
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#       supervisor \
+#       nano \
+#       libreadline-dev \
+#       libxml2-dev \
+#       python-libxml2 \
+#       dh-autoreconf \
+#       libtool-bin \
+#       libxslt1-dev \
+#       libcurl4-openssl-dev \
+#       xsltproc \
+#       python-setuptools \
+#       cmake \
+#       zlib1g-dev \
+#       libssl-dev \
+#       git \
+#       pkg-config \
+#       ca-certificates \
+#       build-essential \
+#       python-lxml \
+#       ssh \
+#       curl \
+#       iproute2 \
+#       dhcpcd5 \
+#       libpam0g-dev \
+#     && rm -rf /var/lib/apt/lists/*
 
 
 #Install pyang
@@ -43,40 +73,41 @@ RUN set -e -x; \
         python setup.py install; \
     rm -Rf $SRC_PATH/pyang
 
-#Install libssh
-ARG LIBSSH_VERSION=0.7.5
-ENV LIBSSH_VERSION_BUILD=$LIBSSH_VERSION
-
-RUN set -e -x; \
-    git clone -b libssh-$LIBSSH_VERSION_BUILD https://git.libssh.org/projects/libssh.git libssh; \
-      cd libssh; \
-        mkdir build; \
-        cd build; \
-        cmake ..; \
-        make; \
-        make install; \
-    rm -Rf $SRC_PATH/libssh
+# #Install libssh
+# ARG LIBSSH_VERSION=0.7.5
+# ENV LIBSSH_VERSION_BUILD=$LIBSSH_VERSION
+#
+# RUN set -e -x; \
+#     git clone -b libssh-$LIBSSH_VERSION_BUILD https://git.libssh.org/projects/libssh.git libssh; \
+#       cd libssh; \
+#         mkdir build; \
+#         cd build; \
+#         cmake ..; \
+#         make; \
+#         make install; \
+#     rm -Rf $SRC_PATH/libssh
 
 
 #Install libnetconf
 RUN set -e -x; \
     git clone --depth 1 https://github.com/CESNET/libnetconf libnetconf; \
       cd libnetconf; \
-        ./configure; \
+        ./configure --prefix='/usr'; \
         make; \
         make install; \
+        ln -s /usr/lib/pkgconfig/libnetconf.pc /usr/lib64/pkgconfig/; \
     rm -Rf $SRC_PATH/libnetconf
 
 #Install netopeer server and client
 RUN set -e -x; \
     git clone --depth 1 https://github.com/CESNET/netopeer netopeer; \
       cd netopeer/server; \
-        ./configure; \
+        ./configure --prefix='/usr'; \
         make; \
         make install; \
-        cp -v config/datastore.xml /usr/local/etc/netopeer/cfgnetopeer/datastore.xml; \
+        cp -v config/datastore.xml /usr/etc/netopeer/cfgnetopeer/datastore.xml; \
       cd ../cli; \
-        ./configure; \
+        ./configure --prefix='/usr'; \
         make; \
         make install; \
     rm -Rf $SRC_PATH/netopeer
@@ -90,7 +121,7 @@ RUN set -e -x; \
       curl -O https://download.strongswan.org/strongswan-$STRONGSWAN_VERSION_BUILD.tar.bz2; \
       tar xvf strongswan*; \
       cd strongswan*; \
-        ./configure \
+        ./configure --prefix='/usr' \
             --enable-eap-identity \
             --enable-eap-md5 \
             --enable-eap-mschapv2 \
@@ -117,8 +148,8 @@ RUN set -e -x; \
 
 
 # #Install netopeer server and client with cfgsystem and cfginterfaces
-RUN git clone --depth 1 https://github.com/CESNET/netopeer netopeer
-#
+# RUN git clone --depth 1 https://github.com/CESNET/netopeer netopeer
+
 # RUN set -e -x; \
 #     git clone --depth 1 https://github.com/CESNET/netopeer netopeer; \
 #       cd netopeer/transAPI; \
@@ -130,14 +161,18 @@ RUN git clone --depth 1 https://github.com/CESNET/netopeer netopeer
 #           ./configure; \
 #           make; \
 #           make install; \
+#           sed -i '/<hostname>/d' /usr/etc/netopeer/ietf-system/datastore.xml; \
 #     rm -Rf $SRC_PATH/netopeer
 
 
 COPY conf/netconf-cfg.sh /etc/netconf-cfg.sh
 COPY misc/netopeer-server-start /usr/bin/netopeer-server-start
 RUN chmod +x /etc/netconf-cfg.sh
-COPY misc/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY misc/supervisord.conf /etc/supervisord.d/supervisord.ini
 
 COPY conf/datastore-acm.xml /var/lib/libnetconf/
 
-CMD /usr/bin/supervisord
+CMD /usr/bin/supervisord -c /etc/supervisord.conf
+
+#expose ports
+EXPOSE 830
