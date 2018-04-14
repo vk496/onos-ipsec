@@ -82,22 +82,6 @@ RUN set -e -x; \
     rm -Rf $SRC_PATH/netopeer
 
 
-# #Install netopeer server and client with cfgsystem and cfginterfaces
-# RUN git clone --depth 1 https://github.com/CESNET/netopeer netopeer
-#
-# RUN set -e -x; \
-#     git clone --depth 1 https://github.com/CESNET/netopeer netopeer; \
-#       cd netopeer/transAPI; \
-#         cd cfginterfaces; \
-#           ./configure; \
-#           make; \
-#           make install; \
-#         cd ../cfgsystem; \
-#           ./configure; \
-#           make; \
-#           make install; \
-#     rm -Rf $SRC_PATH/netopeer
-
 #Install strongswan
 ARG STRONGSWAN_VERSION=5.5.0
 ENV STRONGSWAN_VERSION_BUILD=$STRONGSWAN_VERSION
@@ -130,6 +114,24 @@ RUN set -e -x; \
         make install; \
         cp src/libcharon/plugins/vici/libvici.h /usr/local/include/; \
       rm -Rf $SRC_PATH/strongswan*
+
+
+# #Install netopeer server and client with cfgsystem and cfginterfaces
+RUN git clone --depth 1 https://github.com/CESNET/netopeer netopeer
+#
+# RUN set -e -x; \
+#     git clone --depth 1 https://github.com/CESNET/netopeer netopeer; \
+#       cd netopeer/transAPI; \
+#         cd cfginterfaces; \
+#           ./configure; \
+#           make; \
+#           make install; \
+#         cd ../cfgsystem; \
+#           ./configure; \
+#           make; \
+#           make install; \
+#     rm -Rf $SRC_PATH/netopeer
+
 
 COPY conf/netconf-cfg.sh /etc/netconf-cfg.sh
 COPY misc/netopeer-server-start /usr/bin/netopeer-server-start
