@@ -31,10 +31,10 @@ RUN yum install -y \
       pam-devel \
       net-tools \
       nc \
-      iproute
+      iproute \
+      dhclient
 
 RUN pip install lxml
-RUN ["ssh-keygen", "-A"]
 # RUN apt-get update && apt-get install -y --no-install-recommends \
 #       supervisor \
 #       nano \
@@ -147,22 +147,36 @@ RUN set -e -x; \
       rm -Rf $SRC_PATH/strongswan*
 
 
-# #Install netopeer server and client with cfgsystem and cfginterfaces
+#Install netopeer server and client with cfgsystem and cfginterfaces
 # RUN git clone --depth 1 https://github.com/CESNET/netopeer netopeer
 
-# RUN set -e -x; \
-#     git clone --depth 1 https://github.com/CESNET/netopeer netopeer; \
-#       cd netopeer/transAPI; \
-#         cd cfginterfaces; \
-#           ./configure; \
-#           make; \
-#           make install; \
-#         cd ../cfgsystem; \
-#           ./configure; \
-#           make; \
-#           make install; \
-#           sed -i '/<hostname>/d' /usr/etc/netopeer/ietf-system/datastore.xml; \
-#     rm -Rf $SRC_PATH/netopeer
+RUN set -e -x; \
+    git clone --depth 1 https://github.com/vk496/netopeer netopeer; \
+      cd netopeer/transAPI; \
+        cd cfginterfaces; \
+          ./configure --prefix='/usr'; \
+          make; \
+          make install; \
+        # cd ../cfgsystem; \
+        #   ./configure --prefix='/usr'; \
+        #   make; \
+        #   make install; \
+        #   sed -i '/<hostname>/d' /usr/etc/netopeer/ietf-system/datastore.xml; \
+    rm -Rf $SRC_PATH/netopeer
+
+COPY src/cfgipsec $SRC_PATH/cfgipsec
+
+RUN set -e -x; \
+      cd cfgipsec; \
+        git checkout SDN-ipsec-case2; \
+          autoreconf --force --install; \
+          make clean; \
+          ./configure --prefix='/usr'; \
+            cp original/Makefile .; \
+            sed -i 's/\/usr\/local/\/usr/g' Makefile; \
+            ln -s /usr/share/libnetconf /usr/local/share/; \
+          make; \
+          make install;
 
 
 COPY conf/netconf-cfg.sh /etc/netconf-cfg.sh
@@ -175,4 +189,4 @@ COPY conf/datastore-acm.xml /var/lib/libnetconf/
 CMD /usr/bin/supervisord -c /etc/supervisord.conf
 
 #expose ports
-EXPOSE 830
+# EXPOSE 830

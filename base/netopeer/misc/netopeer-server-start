@@ -3,6 +3,8 @@
 NETCONF_USER=${NETCONF_USER-"root"}
 NETCONF_PASSWORD=${NETCONF_PASSWORD-"root"}
 
+ssh-keygen -A
+
 echo -e "$NETCONF_USER\n$NETCONF_PASSWORD" | passwd
 
 netopeer-server "$@"
