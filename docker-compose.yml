@@ -10,8 +10,8 @@ services:
     ports:
         -   8181:8181
     networks:
-        red1:
-            ipv4_address: 192.168.29.2
+        net_sdn:
+            ipv4_address: 10.0.3.204
 
   # mininet:
   #   build: base/mininet
@@ -44,14 +44,14 @@ services:
     depends_on:
       - "onos"
     networks:
-      - red1
+      - net_sdn
 
 
 
 
 networks:
-  red1:
+  net_sdn:
     driver: bridge
     ipam:
      config:
-       - subnet: 192.168.29.0/24
+       - subnet: 10.0.3.0/24
