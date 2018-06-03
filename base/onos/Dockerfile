@@ -11,7 +11,7 @@ RUN mvn -B clean install -DskipTests -Dcheckstyle.skip -Dasciidoctor.skip -Djaco
 
 #The app
 COPY src/$APP_ARTIFACTID/ .
-RUN mvn clean install
+RUN mvn -Dmaven.test.skip=true clean install
 
 FROM onosproject/onos:1.11.1
 
@@ -22,6 +22,9 @@ ENV APP_GROUPID org.foo
 ENV APP_ARTIFACTID foo-app
 
 COPY --from=builder /root/$APP_ARTIFACTID/target/$APP_ARTIFACTID-1.0-SNAPSHOT.oar /deploy/
+
+#Debug
+EXPOSE 5005
 
 ENTRYPOINT []
 CMD ["./autodeploy.sh"]

@@ -14,4 +14,4 @@ install_apps() {
 
 install_apps &
 
-./bin/onos-service server
+./bin/onos-service server debug
