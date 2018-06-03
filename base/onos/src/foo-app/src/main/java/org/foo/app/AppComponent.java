@@ -32,7 +32,7 @@ public class AppComponent {
 
     @Activate
     protected void activate() {
-        log.info("Started");
+        log.info("Started vk496");
     }
 
     @Deactivate

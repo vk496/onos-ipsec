@@ -1,6 +1,7 @@
 #!/bin/sh
 
-if ! [[ $1 =~ ^[0-9]+$ ]] && [[ $1 -gt 0 ]]; then
+
+if [[ -z $1 ]] || ( ! [[ $1 =~ ^[0-9]+$ ]] && [[ $1 -gt 0 ]] ); then
 	docker-compose up -d --build
 else
 	echo Deploy with $1 instances

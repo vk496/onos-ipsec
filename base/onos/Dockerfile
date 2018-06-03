@@ -15,8 +15,13 @@ RUN mvn clean install
 
 FROM onosproject/onos:1.11.1
 
+COPY misc/autodeploy.sh .
+RUN chmod +x autodeploy.sh
+
 ENV APP_GROUPID org.foo
 ENV APP_ARTIFACTID foo-app
 
-COPY --from=builder /root/$APP_ARTIFACTID/target/$APP_ARTIFACTID-1.0-SNAPSHOT.oar apps/$APP_GROUPID.$APP_ARTIFACTID/$APP_GROUPID.$APP_ARTIFACTID.oar
-COPY --from=builder /root/$APP_ARTIFACTID/target/oar/app.xml apps/$APP_GROUPID.$APP_ARTIFACTID/
+COPY --from=builder /root/$APP_ARTIFACTID/target/$APP_ARTIFACTID-1.0-SNAPSHOT.oar /deploy/
+
+ENTRYPOINT []
+CMD ["./autodeploy.sh"]
