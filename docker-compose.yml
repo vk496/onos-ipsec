@@ -4,9 +4,11 @@ services:
 # Org1 #####################################
 
   onos:
-    image: onosproject/onos:1.11.1
+    build: base/onos
     environment:
-        - ONOS_APPS=fwd,netconf,drivers.netconf,netconfsb,yang-gui
+        - ONOS_APPS=fwd,netconf,drivers.netconf,netconfsb,yang-gui,org.foo.app
+    env_file:
+      - ".env"
     ports:
         -   8181:8181
     networks:
@@ -40,7 +42,7 @@ services:
       - NETCONF_USER=root
       - NETCONF_PASSWORD=root
     env_file:
-      - "variables.env"
+      - ".env"
     depends_on:
       - "onos"
     networks:

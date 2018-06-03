@@ -10,7 +10,7 @@ while ! curl -s --user $ONOS_USER:$ONOS_PASSWORD -X POST -H "Content-Type: appli
 	sleep 0.5
 done
 
-sleep 3
+sleep 6
 
 cfg=$(cat <<EOF
 {
