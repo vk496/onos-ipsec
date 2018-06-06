@@ -18,7 +18,13 @@ package org.foo.app;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
+import org.onosproject.cfg.ComponentConfigService;
+import org.onosproject.core.ApplicationId;
+import org.onosproject.core.CoreService;
+import org.onosproject.net.device.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +34,34 @@ import org.slf4j.LoggerFactory;
 @Component(immediate = true)
 public class AppComponent {
 
+    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
+    protected CoreService coreService;
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
+    protected ComponentConfigService cfgService;
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
+    protected DeviceService deviceService;
+
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    private ApplicationId appId;
+//
+    protected NetopeerListener netListener = null;
 
     @Activate
     protected void activate() {
-        log.info("Started vk496");
+        log.info("Started init1 vk496");
+
+        appId = coreService.registerApplication("org.foo.foo-app");
+        log.info("Started init2 vk496");
+
+        netListener = new NetopeerListener();
+        log.info("Started init4 vk496");
+
+        deviceService.addListener(netListener);
+
+        log.info("Started FINAL vk496");
     }
 
     @Deactivate
