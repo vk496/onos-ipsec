@@ -25,6 +25,7 @@ import org.onosproject.cfg.ComponentConfigService;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
 import org.onosproject.net.device.DeviceService;
+import org.onosproject.netconf.NetconfController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class AppComponent {
     protected ComponentConfigService cfgService;
 
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
-    protected DeviceService deviceService;
+    protected NetconfController deviceController;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -51,17 +52,13 @@ public class AppComponent {
 
     @Activate
     protected void activate() {
-        log.info("Started init1 vk496");
-
+        log.info("Started");
         appId = coreService.registerApplication("org.foo.foo-app");
-        log.info("Started init2 vk496");
 
-        netListener = new NetopeerListener();
-        log.info("Started init4 vk496");
+        netListener = new NetopeerListener(deviceController);
 
-        deviceService.addListener(netListener);
+        deviceController.addDeviceListener(netListener);
 
-        log.info("Started FINAL vk496");
     }
 
     @Deactivate

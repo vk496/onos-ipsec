@@ -70,6 +70,11 @@
             <version>1.9.12</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.onosproject</groupId>
+            <artifactId>onos-netconf-api</artifactId>
+            <version>1.6.0</version>
+        </dependency>
     </dependencies>
 
     <build>

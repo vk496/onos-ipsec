@@ -15,24 +15,6 @@ services:
         net_sdn:
             ipv4_address: 10.0.3.204
 
-  # mininet:
-  #   build: base/mininet
-  #   container_name: mininet
-  #   privileged: true
-  #   depends_on:
-  #       - "onos"
-  #   links:
-  #    - onos
-  #    - netopeer
-  #   environment:
-  #    - DISPLAY
-  #   volumes:
-  #    - /tmp/.X11-unix:/tmp/.X11-unix
-  #    - /lib/modules:/lib/modules
-  #    - ./base/mininet/conf:/root/tfg
-  #   networks:
-  #     - red1
-
   netopeer:
     build: base/netopeer
     cap_add:
