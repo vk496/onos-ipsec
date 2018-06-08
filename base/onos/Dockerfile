@@ -13,7 +13,13 @@ RUN mvn -B clean install -DskipTests -Dcheckstyle.skip -Dasciidoctor.skip -Djaco
 COPY src/$APP_ARTIFACTID/ .
 RUN mvn -Dmaven.test.skip=true clean install
 
-FROM onosproject/onos:1.11.1
+FROM vk496/onos:1.13
+
+# #Fix Yang Live Compiler
+# RUN set -e; \
+#       apk add --no-cache openjdk8; \
+#         rm -Rf $JAVA_HOME/jre; \
+#       mv /usr/lib/jvm/java-1.8-openjdk/ $JAVA_HOME/jre;
 
 COPY misc/autodeploy.sh .
 RUN chmod +x autodeploy.sh
