@@ -51,7 +51,7 @@ public class NetopeerListener implements NetconfDeviceListener {
                     log.info("vk496 - Unknown IP for xml: " + ip);
                     break;
             }
-            log.info("vk496 - Set xml to" + ip);
+            log.info("vk496 - Set xml to " + ip);
 
         } catch (NetconfException ex) {
             log.info("vk496 - Edit config error. " + ex);
@@ -65,7 +65,12 @@ public class NetopeerListener implements NetconfDeviceListener {
     }
 
     private String getIPsecH1() {
-        return "<ietf-ipsec xmlns=\"http://example.net/ietf-ipsec\" xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rpc message-id=\"6\"  "
+                + "xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
+                + "<edit-config>\n"
+                + "<target><running/></target>\n"
+                + "<config xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
+                + "<ietf-ipsec xmlns=\"http://example.net/ietf-ipsec\" xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
                 + "<ipsec nc:operation=\"merge\">\n"
                 + "  <spd>\n"
                 + "	<spd-entry>\n"
@@ -214,11 +219,19 @@ public class NetopeerListener implements NetconfDeviceListener {
                 + "	</sad-entry>\n"
                 + "</sad>\n"
                 + "</ipsec>\n"
-                + "</ietf-ipsec>";
+                + "</ietf-ipsec>\n"
+                + "</config>\n"
+                + "</edit-config>\n"
+                + "</rpc>]]>]]>";
     }
 
     private String getIPsecH2() {
-        return "<ietf-ipsec xmlns=\"http://example.net/ietf-ipsec\" xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rpc message-id=\"6\"  "
+                + "xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
+                + "<edit-config>\n"
+                + "<target><running/></target>\n"
+                + "<config xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
+                + "<ietf-ipsec xmlns=\"http://example.net/ietf-ipsec\" xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
                 + "<ipsec nc:operation=\"merge\">\n"
                 + "  <spd>\n"
                 + "	<spd-entry>\n"
@@ -367,6 +380,9 @@ public class NetopeerListener implements NetconfDeviceListener {
                 + "	</sad-entry>\n"
                 + "</sad>\n"
                 + "</ipsec>\n"
-                + "</ietf-ipsec>";
+                + "</ietf-ipsec>\n"
+                + "</config>\n"
+                + "</edit-config>\n"
+                + "</rpc>]]>]]>";
     }
 }

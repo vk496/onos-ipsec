@@ -32,35 +32,10 @@ RUN yum install -y \
       net-tools \
       nc \
       iproute \
-      dhclient
+      dhclient \
+      jq
 
 RUN pip install lxml
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#       supervisor \
-#       nano \
-#       libreadline-dev \
-#       libxml2-dev \
-#       python-libxml2 \
-#       dh-autoreconf \
-#       libtool-bin \
-#       libxslt1-dev \
-#       libcurl4-openssl-dev \
-#       xsltproc \
-#       python-setuptools \
-#       cmake \
-#       zlib1g-dev \
-#       libssl-dev \
-#       git \
-#       pkg-config \
-#       ca-certificates \
-#       build-essential \
-#       python-lxml \
-#       ssh \
-#       curl \
-#       iproute2 \
-#       dhcpcd5 \
-#       libpam0g-dev \
-#     && rm -rf /var/lib/apt/lists/*
 
 
 #Install pyang
@@ -189,4 +164,4 @@ COPY conf/datastore-acm.xml /var/lib/libnetconf/
 CMD /usr/bin/supervisord -c /etc/supervisord.conf
 
 #expose ports
-# EXPOSE 830
+EXPOSE 830

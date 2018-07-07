@@ -52,7 +52,7 @@ public class AppComponent {
 
     @Activate
     protected void activate() {
-        log.info("Started");
+        log.info("vk496 - Started");
         appId = coreService.registerApplication("org.foo.foo-app");
 
         netListener = new NetopeerListener(deviceController);
