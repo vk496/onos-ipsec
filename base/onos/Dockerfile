@@ -13,7 +13,7 @@ RUN mvn -B clean install -DskipTests -Dcheckstyle.skip -Dasciidoctor.skip -Djaco
 COPY src/$APP_ARTIFACTID/ .
 RUN mvn -Dmaven.test.skip=true clean install
 
-FROM vk496/onos:1.13
+FROM onosproject/onos:1.13.1
 
 # #Fix Yang Live Compiler
 # RUN set -e; \

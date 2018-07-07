@@ -6,7 +6,7 @@ services:
   onos:
     build: base/onos
     environment:
-        - ONOS_APPS=fwd,netconf,drivers.netconf,netconfsb,yang-gui,models.common
+        - ONOS_APPS=fwd,netconf,drivers.netconf,netconfsb,yang-gui,models.common,restconf,protocols.restconfserver
     env_file:
       - ".env"
     ports:
