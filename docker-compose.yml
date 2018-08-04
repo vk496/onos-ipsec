@@ -42,3 +42,5 @@ networks:
     ipam:
      config:
        - subnet: 192.169.0.0/24
+    driver_opts:
+     com.docker.network.bridge.name: sdn_data
