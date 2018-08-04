@@ -10,14 +10,16 @@ while ! ( curl -f -s --user $ONOS_USER:$ONOS_PASSWORD -X GET http://onos:8181/on
 	sleep $ONOS_SUBMIT_WAIT
 done
 
+ip2sdn=$(ip route get $SDN_NET | awk '{print $8}')
+
 sleep 10
 
 cfg=$(cat <<EOF
 {
   "devices": {
-    "netconf:$(hostname --ip-address)": {
+    "netconf:$ip2sdn": {
       "netconf": {
-        "ip": "$(hostname --ip-address)",
+        "ip": "$ip2sdn",
         "port": 830,
         "username": "$NETCONF_USER",
         "password": "$NETCONF_PASSWORD"

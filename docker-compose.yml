@@ -1,8 +1,6 @@
 version: '3'
 services:
 
-# Org1 #####################################
-
   onos:
     build: base/onos
     environment:
@@ -12,9 +10,8 @@ services:
     ports:
         -   8181:8181
     networks:
-        net_sdn:
+        sdn_control:
             ipv4_address: 10.0.3.204
-
   netopeer:
     build: base/netopeer
     cap_add:
@@ -23,19 +20,25 @@ services:
     environment:
       - NETCONF_USER=root
       - NETCONF_PASSWORD=root
+      - SDN_NET=10.0.3.0/24
     env_file:
       - ".env"
     depends_on:
       - "onos"
     networks:
-      - net_sdn
-
-
-
+      - sdn_control
+      - sdn_data
 
 networks:
-  net_sdn:
+  sdn_control:
     driver: bridge
     ipam:
      config:
        - subnet: 10.0.3.0/24
+    driver_opts:
+     com.docker.network.bridge.name: sdn_control
+  sdn_data:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 192.169.0.0/24
