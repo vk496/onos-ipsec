@@ -76,6 +76,11 @@
             <artifactId>onos-netconf-api</artifactId>
             <version>1.6.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.onosproject</groupId>
+            <artifactId>onos-drivers-utilities</artifactId>
+            <version>1.8.9</version>
+        </dependency>
     </dependencies>
 
     <build>

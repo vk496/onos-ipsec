@@ -12,7 +12,8 @@ done
 
 ip2sdn=$(ip route get $SDN_NET | awk '{print $8}')
 
-sleep 10
+# Still not working. We must to wait a little bit before continue
+sleep 7
 
 cfg=$(cat <<EOF
 {

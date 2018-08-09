@@ -5,6 +5,9 @@
  */
 package org.foo.app;
 
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import org.onosproject.net.DeviceId;
 import org.onosproject.net.device.DeviceEvent;
@@ -25,6 +28,10 @@ public class NetopeerListener implements NetconfDeviceListener {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private NetconfController controller = null;
+    private int id_couter = 1;
+    private DeviceId rootDevice = null; //our root device ID
+    private String rootDeviceDataLayerIP = null;
+    private final Set<DeviceId> listDevices = new LinkedHashSet<>(); //List parsed devices
 
     public NetopeerListener(NetconfController controller) {
         this.controller = controller;
@@ -32,35 +39,52 @@ public class NetopeerListener implements NetconfDeviceListener {
 
     @Override
     public void deviceAdded(DeviceId di) {
-        log.info("vk496 - NEW DEVICE " + di);
-        NetconfDevice d = controller.getNetconfDevice(di);
-        NetconfSession s = d.getSession();
-        log.info("vk496 - Sent message to " + di);
 
-        String ip = d.getDeviceInfo().ip().toInetAddress().getHostAddress();
-
-        try {
-            switch (ip) {
-                case "10.0.3.2":
-                    s.editConfig(getIPsecConfig("192.169.0.2", "192.169.0.3", 10, 11));
-                    break;
-                case "10.0.3.3":
-                    s.editConfig(getIPsecConfig("192.169.0.3", "192.169.0.2", 11, 10));
-                    break;
-                default:
-                    log.info("vk496 - Unknown IP for xml: " + ip);
-                    break;
-            }
-            log.info("vk496 - Set xml to " + ip);
-
-        } catch (NetconfException ex) {
-            log.info("vk496 - Edit config error. " + ex);
+        if (listDevices.contains(di)) { //already parsed
+            return;
+        } else {
+            listDevices.add(di); //avoid duplicates when parsin
         }
 
+        log.info("vk496 - NEW DEVICE " + di);
+
+        try {
+            registerDevice(di); //Let's register
+        } catch (NetconfException ex) {
+            log.info("vk496 - Bad bad bad " + di + ". " + ex);
+        }
+
+//        NetconfDevice d = controller.getNetconfDevice(di);
+//        NetconfSession s = d.getSession();
+//
+////        log.info("vk496 - Sent message to " + di);
+//        String ip = d.getDeviceInfo().ip().toInetAddress().getHostAddress();
+//
+//        try {
+//            switch (ip) {
+//                case "10.0.3.2":
+//                    s.requestSync(getIPsecConfig("192.169.0.2", "192.169.0.3", 10, 11));
+//                    break;
+//                case "10.0.3.3":
+//                    s.requestSync(getIPsecConfig("192.169.0.3", "192.169.0.2", 11, 10));
+//                    break;
+//                default:
+//                    log.info("vk496 - Unknown IP for xml: " + ip);
+//                    break;
+//            }
+//            log.info("vk496 - Set xml to " + ip);
+//
+//        } catch (NetconfException ex) {
+//            log.info("vk496 - Edit config error. " + ex);
+//        }
     }
 
     @Override
     public void deviceRemoved(DeviceId di) {
+        if (listDevices.contains(di)) {
+            listDevices.remove(di);
+        }
+
         log.info("vk496 - REMOVED DEVICE " + di);
     }
 
@@ -225,4 +249,57 @@ public class NetopeerListener implements NetconfDeviceListener {
                 + "</rpc>]]>]]>";
     }
 
+    private synchronized void registerDevice(DeviceId device) throws NetconfException {
+
+//        YangXmlUtils.getInstance().loadXml(null).set;
+        if (rootDevice == null) { //The first one will not contain any rule
+            rootDevice = device;
+            rootDeviceDataLayerIP = getDataLayerIP(device);
+            log.info("vk496 - Root device: " + device + "; DataLayerIP: " + rootDeviceDataLayerIP);
+        } else { //we will have 2 devices or more. Time to set SAs!
+            NetconfSession rootSession = controller.getNetconfDevice(rootDevice).getSession();
+            NetconfSession remoteSession = controller.getNetconfDevice(device).getSession();
+
+//            sd.
+//            for (Map.Entry<DeviceId, NetconfDevice> pair: controller.getDevicesMap().entrySet()) {
+            String remoteDeviceDataLayerIP = getDataLayerIP(device);
+
+            //Set root parameteres
+            rootSession.requestSync(getIPsecConfig(rootDeviceDataLayerIP, remoteDeviceDataLayerIP, id_couter, id_couter + 1));
+
+            //Set remote parameters
+            remoteSession.requestSync(getIPsecConfig(remoteDeviceDataLayerIP, rootDeviceDataLayerIP, id_couter + 1, id_couter));
+
+            id_couter++;
+            log.info("vk496 - Remote device: " + device + "; DataLayerIP: " + remoteDeviceDataLayerIP);
+//            }
+        }
+    }
+
+    private String getDataLayerIP(DeviceId d) throws NetconfException {
+        String request = "<rpc message-id=\"101\"\n"
+                + "          xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">"
+                + "<get>\n"
+                + "         <filter type=\"subtree\">\n"
+                + "           <interfaces-state xmlns=\"urn:ietf:params:xml:ns:yang:ietf-interfaces\">\n"
+                + "               <interface>\n"
+                + "                 <name>eth1</name>\n"
+                + "               </interface>\n"
+                + "           </interfaces-state>\n"
+                + "         </filter>\n"
+                + "       </get>"
+                + "</rpc>";
+
+        NetconfSession s = controller.getNetconfDevice(d).getSession();
+
+        String response = s.requestSync(request);
+
+        return response.split("<ip>")[1].split("</ip>")[0];
+
+//        return request;
+    }
+
+//    private IpAddress getIp(DeviceId device){
+//        return controller.getNetconfDevice(device).getDeviceInfo().ip();
+//    }
 }
