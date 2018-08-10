@@ -6,7 +6,7 @@ services:
     environment:
         - ONOS_APPS=fwd,netconf,drivers.netconf,netconfsb,yang-gui,models.common,restconf,protocols.restconfserver
     env_file:
-      - ".env"
+      - "onos.env"
     ports:
         -   8181:8181
     networks:
@@ -22,7 +22,7 @@ services:
       - NETCONF_PASSWORD=root
       - SDN_NET=10.0.3.0/24
     env_file:
-      - ".env"
+      - "onos.env"
     depends_on:
       - "onos"
     networks:
