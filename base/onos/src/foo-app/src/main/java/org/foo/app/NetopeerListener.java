@@ -5,18 +5,9 @@
  */
 package org.foo.app;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 import org.onosproject.net.DeviceId;
-import org.onosproject.net.device.DeviceEvent;
-import org.onosproject.net.device.DeviceListener;
 import org.onosproject.netconf.NetconfController;
 import org.onosproject.netconf.NetconfDevice;
 import org.onosproject.netconf.NetconfDeviceListener;
@@ -66,36 +57,10 @@ public class NetopeerListener implements NetconfDeviceListener {
             log.info("vk496 - Bad bad bad " + di + ". " + ex);
         }
 
-//        NetconfDevice d = controller.getNetconfDevice(di);
-//        NetconfSession s = d.getSession();
-//
-////        log.info("vk496 - Sent message to " + di);
-//        String ip = d.getDeviceInfo().ip().toInetAddress().getHostAddress();
-//
-//        try {
-//            switch (ip) {
-//                case "10.0.3.2":
-//                    s.requestSync(getIPsecConfig("192.169.0.2", "192.169.0.3", 10, 11));
-//                    break;
-//                case "10.0.3.3":
-//                    s.requestSync(getIPsecConfig("192.169.0.3", "192.169.0.2", 11, 10));
-//                    break;
-//                default:
-//                    log.info("vk496 - Unknown IP for xml: " + ip);
-//                    break;
-//            }
-//            log.info("vk496 - Set xml to " + ip);
-//
-//        } catch (NetconfException ex) {
-//            log.info("vk496 - Edit config error. " + ex);
-//        }
     }
 
     @Override
     public void deviceRemoved(DeviceId di) {
-//        if (listDevices.contains(di)) {
-//            listDevices.remove(di);
-//        }
 
         log.info("vk496 - REMOVED DEVICE " + di);
     }
@@ -315,14 +280,8 @@ public class NetopeerListener implements NetconfDeviceListener {
         }
 
         NetconfSession newDeviceSession = controller.getNetconfDevice(new_device).getSession();
-
         newDeviceSession.requestSync(encapsulateSPDandSADinXML(all_SPD, all_SAD));
 
-//            sd.
-//            for (Map.Entry<DeviceId, NetconfDevice> pair: controller.getDevicesMap().entrySet()) {
-//        String remoteDeviceDataLayerIP = getDataLayerIP(new_device);
-        //Set remote parameters
-//        newDeviceSession.requestSync(getIPsecConfig(remoteDeviceDataLayerIP, rootDeviceDataLayerIP, id_couter + 1, id_couter));
         log.info("vk496 - Remote device: " + new_device);
 
     }

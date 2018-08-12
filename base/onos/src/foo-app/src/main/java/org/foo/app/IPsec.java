@@ -5,12 +5,18 @@
  */
 package org.foo.app;
 
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.onosproject.drivers.utilities.XmlConfigParser;
 import org.onosproject.net.DeviceId;
 import org.onosproject.netconf.NetconfController;
 import org.onosproject.netconf.NetconfException;
 import org.onosproject.netconf.NetconfSession;
+import org.slf4j.Logger;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  *
@@ -20,6 +26,8 @@ public class IPsec {
 
     private static IPsec INSTANCE = null;
     private static int counter = 1;
+
+    private final Logger log = getLogger(getClass());
 
     private final Map<DeviceId, String> devicesDataLayerIP = new HashMap<>();
     private final Map<String, Integer> devicesDataLayerIPcounter = new HashMap<>();
@@ -80,9 +88,21 @@ public class IPsec {
 
         NetconfSession s = controller.getNetconfDevice(device).getSession();
 
-        String response = s.requestSync(request);
+        String reply = s.requestSync(request);
 
-        String deviceDataLayerIP = response.split("<ip>")[1].split("</ip>")[0];
+        HierarchicalConfiguration cfg = XmlConfigParser.
+                loadXml(new ByteArrayInputStream(reply.getBytes()));
+
+        List<HierarchicalConfiguration> subtrees
+                = cfg.configurationsAt("data.interfaces-state.interface");
+        for (HierarchicalConfiguration netopeerInterface : subtrees) {
+            String nameIface = netopeerInterface.getString("name");
+            HierarchicalConfiguration ipV4info = netopeerInterface.configurationAt("ipv4");
+            String myIP = ipV4info.configurationAt("address").getString("ip");
+            log.info("vk496 - Dynamic iface: " + nameIface + " have IP: " + myIP);
+        }
+
+        String deviceDataLayerIP = reply.split("<ip>")[1].split("</ip>")[0];
 
         devicesDataLayerIP.put(device, deviceDataLayerIP);
 //        devicesDataLayerIPcounter.put(device, counter);
