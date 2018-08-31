@@ -39,26 +39,20 @@ public class AppComponent {
     protected CoreService coreService;
 
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
-    protected ComponentConfigService cfgService;
-
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
     protected NetconfController deviceController;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private ApplicationId appId;
-//
     protected NetopeerListener netListener = null;
 
     @Activate
     protected void activate() {
-        log.info("vk496 - Started");
         appId = coreService.registerApplication("org.foo.foo-app");
-
         netListener = new NetopeerListener(deviceController);
-
         deviceController.addDeviceListener(netListener);
-
+        
+        log.info("vk496 - Started");
     }
 
     @Deactivate

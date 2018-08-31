@@ -10,7 +10,7 @@ while ! ( curl -f -s --user $ONOS_USER:$ONOS_PASSWORD -X GET http://onos:8181/on
 	sleep $ONOS_SUBMIT_WAIT
 done
 
-ip2sdn=$(ip route get $SDN_NET | awk '{print $8}')
+netopeerIP=$(ip route get $SDN_NET | awk '{print $8}')
 
 # Still not working. We must to wait a little bit before continue
 sleep 7
@@ -18,9 +18,9 @@ sleep 7
 cfg=$(cat <<EOF
 {
   "devices": {
-    "netconf:$ip2sdn": {
+    "netconf:$netopeerIP": {
       "netconf": {
-        "ip": "$ip2sdn",
+        "ip": "$netopeerIP",
         "port": 830,
         "username": "$NETCONF_USER",
         "password": "$NETCONF_PASSWORD"

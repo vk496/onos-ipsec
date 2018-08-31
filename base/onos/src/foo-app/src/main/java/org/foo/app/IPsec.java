@@ -99,7 +99,7 @@ public class IPsec {
             String nameIface = netopeerInterface.getString("name");
             HierarchicalConfiguration ipV4info = netopeerInterface.configurationAt("ipv4");
             String myIP = ipV4info.configurationAt("address").getString("ip");
-            log.info("vk496 - Dynamic iface: " + nameIface + " have IP: " + myIP);
+            log.info("Iface: " + nameIface + " have IP: " + myIP);
         }
 
         String deviceDataLayerIP = reply.split("<ip>")[1].split("</ip>")[0];
@@ -207,11 +207,12 @@ public class IPsec {
                         + "			<action>PROTECT</action>\n"
                         + "			<ipsec-sa-cfg>\n"
                         + "				<security-protocol>esp</security-protocol>\n"
-                        + "				<mode>TUNNEL</mode>\n"
-                        + "        		<tunnel>\n"
-                        + "          			<local>" + remote_ip + "</local>\n"
-                        + "          			<remote>" + local_ip + "</remote>\n"
-                        + "        		</tunnel>\n"
+                        + "				<mode>TRANSPORT</mode>\n"
+                        // + "				<mode>TUNNEL</mode>\n"
+                        // + "        		<tunnel>\n"
+                        // + "          			<local>" + remote_ip + "</local>\n"
+                        // + "          			<remote>" + local_ip + "</remote>\n"
+                        // + "        		</tunnel>\n"
                         + "			</ipsec-sa-cfg>\n"
                         + "		</processing-info>\n"
                         + "	</spd-entry>\n";
@@ -243,8 +244,13 @@ public class IPsec {
                         + "				<key>ecr_secret</key>\n"
                         + "				<iv>vector</iv>\n"
                         + "			</encryption>\n"
+                        + "			<integrity>\n"
+                        + "				<integrity-algorithm>hmac-md5-128</integrity-algorithm>\n"
+                        + "				<key>auth</key>\n"
+                        + "			</integrity>\n"
                         + "		</esp-sa>\n"
-                        + "		<mode>TUNNEL</mode>\n"
+                        // + "		<mode>TUNNEL</mode>\n"
+                        + "		<mode>TRANSPORT</mode>\n"
                         + "	</sad-entry>\n";
             default:
                 throw new IllegalStateException("Wrong XML request");
