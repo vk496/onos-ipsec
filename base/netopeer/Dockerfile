@@ -143,7 +143,7 @@ COPY src/cfgipsec $SRC_PATH/cfgipsec
 
 RUN set -e -x; \
       cd cfgipsec; \
-        git checkout SDN-ipsec-case2; \
+     #   git checkout SDN-ipsec-case2; \
           autoreconf --force --install; \
           make clean; \
           ./configure --prefix='/usr'; \
