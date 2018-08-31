@@ -1,0 +1,3 @@
+[submodule "base/netopeer/src/cfgipsec"]
+	path = base/netopeer/src/cfgipsec
+	url = https://gitlab.atica.um.es/gabilm.um.es/cfgipsec.git
