@@ -11,7 +11,7 @@ services:
         -   8181:8181
     networks:
         sdn_control:
-            ipv4_address: 10.0.3.204
+            ipv4_address: 10.100.3.204
   netopeer:
     build: base/netopeer
     cap_add:
@@ -20,7 +20,7 @@ services:
     environment:
       - NETCONF_USER=root
       - NETCONF_PASSWORD=root
-      - SDN_NET=10.0.3.0/24
+      - SDN_NET=10.100.3.0/24
     env_file:
       - "onos.env"
     depends_on:
@@ -34,7 +34,7 @@ networks:
     driver: bridge
     ipam:
      config:
-       - subnet: 10.0.3.0/24
+       - subnet: 10.100.3.0/24
     driver_opts:
      com.docker.network.bridge.name: sdn_control
   sdn_data:
