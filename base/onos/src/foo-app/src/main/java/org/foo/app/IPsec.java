@@ -266,4 +266,27 @@ public class IPsec {
         SPD, SAD
     }
 
+    public static String encapsulateSPDandSADinXML(String spd_entries, String sad_entries) {
+
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rpc message-id=\"6\"  "
+                + "xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
+                + "<edit-config>\n"
+                + "<target><running/></target>\n"
+                + "<config xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
+                + "<ietf-ipsec xmlns=\"http://example.net/ietf-ipsec\" xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
+                + "<ipsec nc:operation=\"merge\">\n"
+                + "  <spd>\n"
+                + spd_entries
+                + "  </spd>\n"
+                + "<sad>\n"
+                + sad_entries
+                + "</sad>\n"
+                + "</ipsec>\n"
+                + "</ietf-ipsec>\n"
+                + "</config>\n"
+                + "</edit-config>\n"
+                + "</rpc>]]>]]>";
+
+    }
+
 }

@@ -51,8 +51,8 @@ public class AppComponent {
         appId = coreService.registerApplication("org.foo.foo-app");
         netListener = new NetopeerListener(deviceController);
         deviceController.addDeviceListener(netListener);
-        
-        log.info("vk496 - Started");
+
+        log.info("onos-ipsec Started");
     }
 
     @Deactivate
