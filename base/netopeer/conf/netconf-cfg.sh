@@ -13,7 +13,7 @@ done
 netopeerIP=$(ip route get $SDN_NET | awk '{print $8}')
 
 # Still not working. We must to wait a little bit before continue
-sleep 7
+sleep 10
 
 cfg=$(cat <<EOF
 {
