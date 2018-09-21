@@ -66,7 +66,10 @@ RUN set -e -x; \
 #Install libnetconf
 RUN set -e -x; \
     git clone --depth 1 https://github.com/CESNET/libnetconf libnetconf; \
+    #build CHANGE support for libssh v0.8.0 and higher
+    ( cd libnetconf; git checkout 159e155ffc0a98e2d74dcada0ea5868a5f7c59b9 ); \
       cd libnetconf; \
+        autoreconf --force --install; \
         ./configure --prefix='/usr'; \
         make; \
         make install; \
@@ -76,6 +79,8 @@ RUN set -e -x; \
 #Install netopeer server and client
 RUN set -e -x; \
     git clone --depth 1 https://github.com/CESNET/netopeer netopeer; \
+    #DOC update README - deprecate Netopeer and advice to move to Netopeer2
+    ( cd netopeer; git checkout ead52915c138305e6e892a5e880506a78e042eb0 ); \
       cd netopeer/server; \
         ./configure --prefix='/usr'; \
         make; \
