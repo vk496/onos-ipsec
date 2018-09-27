@@ -1,19 +1,18 @@
 #!/bin/bash
 set -x
-# sleep $ONOS_SUBMIT_WAIT
 
 NETCONF_USER=${NETCONF_USER-"root"}
 NETCONF_PASSWORD=${NETCONF_PASSWORD-"root"}
 
 while ! ( curl -f -s --user $ONOS_USER:$ONOS_PASSWORD -X GET http://onos:8181/onos/v1/applications/org.foo.app|grep ^ || echo "__" ) | jq -e 'select(.state=="ACTIVE")'; do
 	echo "Waiting..."
-	sleep $ONOS_SUBMIT_WAIT
+	# sleep 0.5
 done
 
 netopeerIP=$(ip route get $SDN_NET | awk '{print $8}')
 
 # Still not working. We must to wait a little bit before continue
-sleep 10
+# sleep 10
 
 cfg=$(cat <<EOF
 {
