@@ -7,11 +7,11 @@ WORKDIR /root/$APP_ARTIFACTID
 
 #Get maven cache
 COPY src/$APP_ARTIFACTID/pom.xml .
-RUN mvn -B clean install -DskipTests -Dcheckstyle.skip -Dasciidoctor.skip -Djacoco.skip -Dmaven.gitcommitid.skip -Dspring-boot.repackage.skip -Dmaven.exec.skip=true -Dmaven.install.skip -Dmaven.resources.skip
+RUN touch onos.properties; mvn -B dependency:go-offline clean verify
 
 #The app
 COPY src/$APP_ARTIFACTID/ .
-RUN mvn -Dmaven.test.skip=true clean install
+RUN mvn -Dmaven.test.skip=true clean package
 
 FROM onosproject/onos:1.13.1
 

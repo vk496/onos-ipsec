@@ -28,12 +28,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <onos.version>1.11.1</onos.version>
-        <onos.app.name>org.foo.app</onos.app.name>
-        <onos.app.title>Foo App</onos.app.title>
-        <onos.app.origin>Foo, Inc.</onos.app.origin>
-        <onos.app.category>default</onos.app.category>
-        <onos.app.url>http://onosproject.org</onos.app.url>
-        <onos.app.readme>ONOS OSGi bundle archetype.</onos.app.readme>
+        <!-- ONOS properties are defined in onos.properties -->
+        <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
+        <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
+        <maven-bundle-plugin.version>3.0.1</maven-bundle-plugin.version>
+        <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
+        <maven-scr-plugin.version>1.21.0</maven-scr-plugin.version>
+        <onos-maven-plugin.version>1.10</onos-maven-plugin.version>
+        <onos-yang-maven-plugin.version>1.11</onos-yang-maven-plugin.version>
         <java-gen>src/main/java-gen</java-gen>
     </properties>
 
@@ -81,14 +83,67 @@
             <artifactId>onos-drivers-utilities</artifactId>
             <version>1.8.9</version>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>${properties-maven-plugin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-clean-plugin</artifactId>
+            <version>${maven-clean-plugin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>maven-bundle-plugin</artifactId>
+            <version>${maven-bundle-plugin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>${maven-compiler-plugin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>maven-scr-plugin</artifactId>
+            <version>${maven-scr-plugin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.onosproject</groupId>
+            <artifactId>onos-maven-plugin</artifactId>
+            <version>${onos-maven-plugin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.onosproject</groupId>
+            <artifactId>onos-yang-maven-plugin</artifactId>
+            <version>${onos-yang-maven-plugin.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>${properties-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>onos.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${maven-clean-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>onos-yang-plugin-workaround</id>
@@ -111,13 +166,13 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>${maven-bundle-plugin.version}</version>
                 <extensions>true</extensions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -126,7 +181,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>1.21.0</version>
+                <version>${maven-scr-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>generate-scr-srcdescriptor</id>
@@ -145,7 +200,7 @@
             <plugin>
                 <groupId>org.onosproject</groupId>
                 <artifactId>onos-maven-plugin</artifactId>
-                <version>1.10</version>
+                <version>${onos-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>cfg</id>
@@ -173,7 +228,7 @@
             <plugin>
                 <groupId>org.onosproject</groupId>
                 <artifactId>onos-yang-maven-plugin</artifactId>
-                <version>1.11</version>
+                <version>${onos-yang-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <configuration>
