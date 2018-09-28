@@ -5,10 +5,11 @@ services:
     build: base/onos
     environment:
         - ONOS_APPS=models.common,yang-gui
+        - SDN_NET=10.100.3.0/24
     env_file:
       - "onos.env"
     ports:
-        -   8181:8181
+        - 8181:8181
     networks:
         sdn_control:
             ipv4_address: 10.100.3.204

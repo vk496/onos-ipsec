@@ -4,10 +4,18 @@ set -x
 NETCONF_USER=${NETCONF_USER-"root"}
 NETCONF_PASSWORD=${NETCONF_PASSWORD-"root"}
 
-while ! ( curl -f -s --user $ONOS_USER:$ONOS_PASSWORD -X GET http://onos:8181/onos/v1/applications/org.foo.app|grep ^ || echo "__" ) | jq -e 'select(.state=="ACTIVE")'; do
-	echo "Waiting..."
-	# sleep 0.5
-done
+# while ! ( curl -f -s --user $ONOS_USER:$ONOS_PASSWORD -X GET http://onos:8181/onos/v1/applications/org.foo.app|grep ^ || echo "__" ) | jq -e 'select(.state=="ACTIVE")'; do
+# 	echo "Waiting..."
+# 	# sleep 0.5
+# done
+
+#Listen Broadcast
+tcpdump -Avnn -l udp port 3000 |
+	while read p; do
+		 if echo $p | grep -q "onos-ipsec";then
+			 break;
+		 fi;
+ 	done
 
 netopeerIP=$(ip route get $SDN_NET | awk '{print $8}')
 

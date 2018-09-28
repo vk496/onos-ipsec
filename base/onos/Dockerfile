@@ -21,6 +21,9 @@ FROM onosproject/onos:1.13.1
 #         rm -Rf $JAVA_HOME/jre; \
 #       mv /usr/lib/jvm/java-1.8-openjdk/ $JAVA_HOME/jre;
 
+RUN set -e; \
+      apk add --no-cache socat;
+
 COPY misc/autodeploy.sh .
 RUN chmod +x autodeploy.sh
 

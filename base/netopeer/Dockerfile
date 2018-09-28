@@ -33,7 +33,8 @@ RUN yum install -y \
       nc \
       iproute \
       dhclient \
-      jq
+      jq \
+      tcpdump
 
 RUN pip install lxml
 
