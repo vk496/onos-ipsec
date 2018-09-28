@@ -54,8 +54,10 @@ public class NetopeerListener implements NetconfDeviceListener {
             }
 
         } catch (NetconfException ex) {
-            log.info("vk496 - Bad bad bad " + di + ". " + ex);
+            log.info("vk496 - error Bad bad bad " + di + ". " + ex);
         }
+
+        log.info("onos-ipsec new device " + di + ": " + System.currentTimeMillis());
 
     }
 
@@ -225,42 +227,41 @@ public class NetopeerListener implements NetconfDeviceListener {
     //             + "</edit-config>\n"
     //             + "</rpc>]]>]]>";
     // }
+    private synchronized void createTunnels(DeviceId new_device) throws NetconfException {
 
-private synchronized void createTunnels(DeviceId new_device) throws NetconfException {
+        //        YangXmlUtils.getInstance().loadXml(null).set;
+        String all_SPD = "";
+        String all_SAD = "";
 
-    //        YangXmlUtils.getInstance().loadXml(null).set;
-    String all_SPD = "";
-    String all_SAD = "";
+        Map<DeviceId, NetconfDevice> test = new LinkedHashMap<>(controller.getDevicesMap());
+        test.remove(new_device);
 
-    Map<DeviceId, NetconfDevice> test = new LinkedHashMap<>(controller.getDevicesMap());
-    test.remove(new_device);
+        for (Map.Entry<DeviceId, NetconfDevice> pair : test.entrySet()) {
+            String spdForNEWDevice = IPsec.getInstance().getSPD(new_device, pair.getKey(), IPsec.TRAFFIC_TYPE.BOTH);
+            String sadForNEWDevice = IPsec.getInstance().getSAD(new_device, pair.getKey(), IPsec.TRAFFIC_TYPE.BOTH);
 
-    for (Map.Entry<DeviceId, NetconfDevice> pair : test.entrySet()) {
-        String spdForNEWDevice = IPsec.getInstance().getSPD(new_device, pair.getKey(), IPsec.TRAFFIC_TYPE.BOTH);
-        String sadForNEWDevice = IPsec.getInstance().getSAD(new_device, pair.getKey(), IPsec.TRAFFIC_TYPE.BOTH);
+            //rules for the new device
+            all_SPD = all_SPD + spdForNEWDevice;
+            all_SAD = all_SAD + sadForNEWDevice;
 
-        //rules for the new device
-        all_SPD = all_SPD + spdForNEWDevice;
-        all_SAD = all_SAD + sadForNEWDevice;
+            controller
+                    .getNetconfDevice(pair.getKey())
+                    .getSession()
+                    .requestSync(
+                            IPsec.encapsulateSPDandSADinXML(
+                                    IPsec.getInstance().getSPD(pair.getKey(), new_device, IPsec.TRAFFIC_TYPE.BOTH),
+                                    IPsec.getInstance().getSAD(pair.getKey(), new_device, IPsec.TRAFFIC_TYPE.BOTH)
+                            )
+                    );
+            log.info("vk496 - Update tunnel between: " + pair.getKey() + " and " + new_device);
 
-        controller
-                .getNetconfDevice(pair.getKey())
-                .getSession()
-                .requestSync(
-                        IPsec.encapsulateSPDandSADinXML(
-                                IPsec.getInstance().getSPD(pair.getKey(), new_device, IPsec.TRAFFIC_TYPE.BOTH),
-                                IPsec.getInstance().getSAD(pair.getKey(), new_device, IPsec.TRAFFIC_TYPE.BOTH)
-                        )
-                );
-        log.info("vk496 - Update tunnel between: " + pair.getKey() + " and " + new_device);
+        }
+
+        NetconfSession newDeviceSession = controller.getNetconfDevice(new_device).getSession();
+        newDeviceSession.requestSync(IPsec.encapsulateSPDandSADinXML(all_SPD, all_SAD));
+
+        log.info("vk496 - Remote device: " + new_device);
 
     }
-
-    NetconfSession newDeviceSession = controller.getNetconfDevice(new_device).getSession();
-    newDeviceSession.requestSync(IPsec.encapsulateSPDandSADinXML(all_SPD, all_SAD));
-
-    log.info("vk496 - Remote device: " + new_device);
-
-}
 
 }

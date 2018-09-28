@@ -52,7 +52,7 @@ public class AppComponent {
         netListener = new NetopeerListener(deviceController);
         deviceController.addDeviceListener(netListener);
 
-        log.info("onos-ipsec Started");
+        log.info("onos-ipsec Started: " + System.currentTimeMillis());
     }
 
     @Deactivate
